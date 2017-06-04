@@ -25,7 +25,7 @@ namespace MapGen
         public Map(int seed=-1)
         {
             if(seed == -1) { Ring=new Random(Environment.TickCount); } else { Ring=new Random(seed); }
-            for (int i = 0; i < 99; i++)
+            for (int i = 0; i < 100; i++)
             {
                 Regions.Add(new Region(i,Ring));
             }
@@ -46,7 +46,6 @@ namespace MapGen
                 {
                     var loc = mapRegion.GetStarMapPosition(mapRegionStar);
                     bmp.SetPixel(loc.X, loc.Y, Color.White);
-                    mapRegion.SystemCount++;
                 }
             }
             gfx.Dispose();

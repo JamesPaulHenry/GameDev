@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace MapGen
 {
@@ -13,7 +14,7 @@ namespace MapGen
         private int[,] _chanceMatrix = new int[10, 10]
         {
             {01, 01, 01, 02, 05, 05, 02, 01, 01, 01}, //[__][__][01][02][05][05][02][01][__][__]
-            {00, 10, 10, 10, 10, 10, 10, 10, 10, 01}, //[__][10][10][10][10][10][10][10][10][__]
+            {01, 10, 10, 10, 10, 10, 10, 10, 10, 01}, //[__][10][10][10][10][10][10][10][10][__]
             {01, 10, 25, 25, 25, 25, 25, 25, 10, 01}, //[01][10][25][25][25][25][25][25][10][01]
             {02, 25, 25, 50, 50, 50, 50, 25, 10, 02}, //[02][25][25][50][50][50][50][25][10][02]
             {25, 10, 25, 50, 99, 99, 50, 25, 10, 25}, //[25][10][25][50][99][99][50][25][10][25]
@@ -67,7 +68,7 @@ namespace MapGen
 
             foreach (var point in Stars)
             {
-                if (Stars.Count >= Chance)
+                if (Stars.Count >= 100)
                 {
                     return;
                 }
@@ -85,15 +86,34 @@ namespace MapGen
 
         public void Generate()
         {
-            for (int i = 0; i < Chance * 100 + 1; i++)
+            for (int c = 0; c < Chance*100; c++)
             {
-                var chance = 100 - Chance;
-                if (Ring.Next(100) > chance)
-                {
-                    TryToAddStar(new Point { X = Ring.Next(100), Y = Ring.Next(100) });
-                }
 
+
+                for (int i = 0; i < 10; i++)
+                {
+                    for (int j = 0; j < 10; j++)
+                    {
+                        var chance = 100 - _chanceMatrix[i, j];
+                        if (Ring.Next(100) > chance)
+                        {
+                            TryToAddStar(new Point {X = Ring.Next(100), Y = Ring.Next(100)});
+                        }
+                    }
+                }
             }
+            var bmp = new Bitmap(100, 100);
+            var gfx = Graphics.FromImage(bmp);
+            gfx.Clear(Color.Black);
+            gfx.SmoothingMode = SmoothingMode.HighQuality;
+            foreach (var mapRegionStar in Stars)
+            {
+                var loc = mapRegionStar;
+                bmp.SetPixel(loc.X, loc.Y, Color.White);
+                SystemCount++;
+            }
+            gfx.Dispose();
+            Image = bmp;
         }
     }
 }
